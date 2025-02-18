@@ -4,11 +4,11 @@ How to use:
 
 Running the install script
 
-<sudo ./install.sh>
+```sudo ./install.sh```
 
 Running the uninstall script
 
-<sudo ./uninstall.sh>
+```sudo ./uninstall.sh```
 
 UPDATE INFO:
 
