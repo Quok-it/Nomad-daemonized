@@ -30,6 +30,7 @@ NOMAD_DATA_DIR="/opt/nomad"
 # GitHub configuration repository (optional).
 # If you leave this empty, default config files will be generated.
 GITHUB_CONFIG_REPO="https://github.com/Quok-it/nomadClientConfig/archive/refs/tags/awsless.zip"
+GITHUB_RELEASE_DIR="nomadClientConfig-awsless.zip"
 
 # ------------------------------------------------------------------------------
 # 3. Ensure required tools are installed.
@@ -99,7 +100,7 @@ if [ -n "$GITHUB_CONFIG_REPO" ]; then
   mkdir -p "$NOMAD_CONFIG_DIR"
   
   # Define a temporary file to store the downloaded release.
-  TMP_ZIP="/tmp/nomadClientConfig-awsless.zip"
+  TMP_ZIP="/tmp/$GITHUB_RELEASE_DIR"
   
   # Download the release zip using curl.
   curl -L -o "$TMP_ZIP" "$GITHUB_CONFIG_REPO" \
