@@ -17,7 +17,7 @@ fi
 # ------------------------------------------------------------------------------
 # 2. Variables (adjust these as needed)
 # ------------------------------------------------------------------------------
-NOMAD_VERSION="1.6.1"                      # Desired Nomad version.
+NOMAD_VERSION="1.9.6"                      # Desired Nomad version.
 NOMAD_ZIP="nomad_${NOMAD_VERSION}_linux_amd64.zip"
 DOWNLOAD_URL="https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/${NOMAD_ZIP}"
 TMP_DIR="/tmp/nomad_install"
