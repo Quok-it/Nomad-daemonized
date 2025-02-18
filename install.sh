@@ -17,7 +17,15 @@ fi
 # ------------------------------------------------------------------------------
 # 2. Variables (adjust these as needed)
 # ------------------------------------------------------------------------------
+
+#THESE THREE SHOULD BE CHANGED FOR UPDATES TO NOMAD VERSION OR CONFIG
 NOMAD_VERSION="1.9.6"                      # Desired Nomad version.
+# GitHub configuration repository (optional).
+# If you leave this empty, default config files will be generated.
+GITHUB_CONFIG_REPO="https://github.com/Quok-it/nomadClientConfig/archive/refs/tags/awsless.zip"
+GITHUB_RELEASE_DIR="nomadClientConfig-awsless.zip"
+
+
 NOMAD_ZIP="nomad_${NOMAD_VERSION}_linux_amd64.zip"
 DOWNLOAD_URL="https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/${NOMAD_ZIP}"
 TMP_DIR="/tmp/nomad_install"
@@ -27,10 +35,7 @@ NOMAD_BIN="/usr/local/bin/nomad"
 NOMAD_CONFIG_DIR="/etc/nomad.d"
 NOMAD_DATA_DIR="/opt/nomad"
 
-# GitHub configuration repository (optional).
-# If you leave this empty, default config files will be generated.
-GITHUB_CONFIG_REPO="https://github.com/Quok-it/nomadClientConfig/archive/refs/tags/awsless.zip"
-GITHUB_RELEASE_DIR="nomadClientConfig-awsless.zip"
+
 
 # ------------------------------------------------------------------------------
 # 3. Ensure required tools are installed.
