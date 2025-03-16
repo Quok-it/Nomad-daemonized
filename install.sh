@@ -1,5 +1,4 @@
 #!/bin/bash
-# install_and_setup_nomad.sh
 # This script installs HashiCorp Nomad, sets up its configuration and directories (sourced from quok.it's repos),
 # creates a dedicated system user, installs a systemd service,
 # enables it to start on boot, and then starts the Nomad agent.
