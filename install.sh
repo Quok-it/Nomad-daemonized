@@ -19,11 +19,8 @@ fi
 
 #THESE THREE SHOULD BE CHANGED FOR UPDATES TO NOMAD VERSION OR CONFIG
 NOMAD_VERSION="1.9.6"                      # Desired Nomad version.
-# GitHub configuration repository (optional).
-# If you leave this empty, default config files will be generated.
-GITHUB_CONFIG_REPO="https://github.com/Quok-it/nomadClientConfig/archive/refs/tags/awsless.zip"
-GITHUB_RELEASE_DIR="nomadClientConfig-awsless.zip"
 
+SERVER_IP="$1"
 
 NOMAD_ZIP="nomad_${NOMAD_VERSION}_linux_amd64.zip"
 DOWNLOAD_URL="https://releases.hashicorp.com/nomad/${NOMAD_VERSION}/${NOMAD_ZIP}"
@@ -73,14 +70,20 @@ echo "Nomad version installed:"
 $NOMAD_BIN version
 
 # ------------------------------------------------------------------------------
-# 5. Create Nomad system user and required directories
+# 5. Create Nomad user and required directories
 # ------------------------------------------------------------------------------
-echo "=== Setting up Nomad directories and system user ==="
+echo "=== Setting up Nomad directories and user ==="
 
-# Create a dedicated non-privileged system user "nomad" if it does not already exist.
+# Create a dedicated privileged user "nomad" if it does not already exist.
+
 if ! id -u nomad &>/dev/null; then
   echo "Creating nomad system user..."
   useradd --system --home "$NOMAD_CONFIG_DIR" --shell /bin/false nomad
+
+  echo "Adding nomad user to sudoers..."
+  echo "nomad ALL=(ALL) NOPASSWD:ALL" | sudo tee /etc/sudoers.d/nomad >/dev/null
+  sudo chmod 440 /etc/sudoers.d/nomad
+  sudo chown root:root /etc/sudoers.d/nomad
 fi
 
 # Create Nomad data directory and set ownership.
@@ -96,29 +99,44 @@ chmod 700 "$NOMAD_CONFIG_DIR"
 # 6. Configure Nomad
 # ------------------------------------------------------------------------------
 echo "=== Configuring Nomad ==="
-if [ -n "$GITHUB_CONFIG_REPO" ]; then
-  echo "Downloading config release from ${GITHUB_CONFIG_REPO} into ${NOMAD_CONFIG_DIR}..."
-  
-  # Remove any existing configuration directory and recreate it.
-  rm -rf "$NOMAD_CONFIG_DIR"
-  mkdir -p "$NOMAD_CONFIG_DIR"
-  
-  # Define a temporary file to store the downloaded release.
-  TMP_ZIP="/tmp/$GITHUB_RELEASE_DIR"
-  
-  # Download the release zip using curl.
-  curl -L -o "$TMP_ZIP" "$GITHUB_CONFIG_REPO" \
-    || { echo "Error: Failed to download configuration release."; exit 1; }
-  
-  # Unzip the downloaded release into the configuration directory.
-  unzip -j "$TMP_ZIP" -d "$NOMAD_CONFIG_DIR" \
-    || { echo "Error: Failed to unzip configuration release."; exit 1; }
-  
-  # Clean up the temporary zip file.
-  rm -f "$TMP_ZIP"
-else
-  echo "Downloading Github release failed!"
-fi
+
+tee /etc/nomad.d/client.hcl > /dev/null << EOF
+# TODO: mTLS is not configured - Nomad is not secure without mTLS!
+data_dir  = "/opt/nomad/data"
+bind_addr = "0.0.0.0"
+
+client {
+  enabled = true
+  servers = ["${SERVER_IP}"]  # nomad server IP (from "Advertise Addrs" on server-side) --> idk if this will change or not but I set it like this for now
+}
+
+plugin "raw_exec" {
+    config {
+        enabled = true
+    }
+}
+
+plugin "docker" {
+    config {
+        allow_privileged = true
+        allow_caps = ["SYS_ADMIN"]
+    }
+}
+
+# force consul to run on this machine (TODO: little bit of a workaround so should probs fix)
+# consul {
+#     address = "127.0.0.1:8500"
+#     server_auto_join = true
+#     client_auto_join = true
+#     auto_config = true
+# }
+
+plugin "nomad-device-nvidia" {  # probs wouldn't hurt to add nvidia
+  config {
+    enabled = true
+  }
+}
+EOF
 
 # ------------------------------------------------------------------------------
 # 7. Create systemd service file for Nomad
