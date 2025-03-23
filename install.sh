@@ -155,8 +155,8 @@ cat > "$SERVICE_FILE" << 'EOF'
 [Unit]
 Description=Nomad
 Documentation=https://www.nomadproject.io/docs/
-Wants=network-online.target
-After=network-online.target
+Requires=network-online.target
+After=netbird.service
 
 # TODO: Uncomment to ensure consul is running first before this happens
 #Wants=consul.service
@@ -172,7 +172,7 @@ KillSignal=SIGINT
 LimitNOFILE=65536
 LimitNPROC=infinity
 Restart=on-failure
-RestartSec=2
+RestartSec=1
 TasksMax=infinity
 OOMScoreAdjust=-1000
 
