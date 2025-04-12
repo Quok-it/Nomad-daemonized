@@ -164,7 +164,7 @@ After=netbird.service
 #After=consul.service
 
 Wants=netbird.service
-After=netbird.service
+After=netbird.service network-online.target
 
 [Service]
 User=root
