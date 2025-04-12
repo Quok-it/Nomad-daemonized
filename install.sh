@@ -115,6 +115,7 @@ bind_addr = "0.0.0.0"
 
 client {
   enabled = true
+  network_interface="wt0" #set wireguard as default network interface
   servers = ["${SERVER_IP}"]  # nomad server IP (from "Advertise Addrs" on server-side) --> idk if this will change or not but I set it like this for now
 }
 
