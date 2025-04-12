@@ -163,6 +163,9 @@ After=netbird.service
 #Wants=consul.service
 #After=consul.service
 
+Wants=netbird.service
+After=netbird.service
+
 [Service]
 User=root
 Group=root
