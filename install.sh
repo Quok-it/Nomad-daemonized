@@ -108,10 +108,28 @@ chmod 700 "$NOMAD_CONFIG_DIR"
 # ------------------------------------------------------------------------------
 echo "=== Configuring Nomad ==="
 
+# ------------------------------------------------------------------------
+# — Grab the IPv4 address on the Netbird interface wt0 —
+# ------------------------------------------------------------------------
+NETBIRD_IP=$(ip -4 addr show dev wt0 \
+              | awk '/inet /{print $2}' \
+              | cut -d/ -f1)
+
+if [[ -z "$NETBIRD_IP" ]]; then
+  echo "Error: could not detect Netbird IP on wt0" >&2
+  exit 1
+fi
+echo "→ Detected Netbird IP: $NETBIRD_IP"
+
 tee /etc/nomad.d/client.hcl > /dev/null << EOF
 # TODO: mTLS is not configured - Nomad is not secure without mTLS!
 data_dir  = "/opt/nomad/data"
-bind_addr = "0.0.0.0"
+
+advertise {
+  http = "${NETBIRD_IP}:4646"
+  rpc = "${NETBIRD_IP}:4647"
+  serf = "${NETBIRD_IP}:4648"
+}
 
 client {
   enabled = true
