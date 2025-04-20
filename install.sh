@@ -14,11 +14,11 @@ if [ "$EUID" -ne 0 ]; then
 fi
 
 # ------------------------------------------------------------------------------
-# 2. Variables (adjust these as needed)
+# 2. Variables
 # ------------------------------------------------------------------------------
 
 #THESE THREE SHOULD BE CHANGED FOR UPDATES TO NOMAD VERSION OR CONFIG
-NOMAD_VERSION="1.9.6"                      # Desired Nomad version.
+NOMAD_VERSION="1.10.0"                      # Most recent Nomad version.
 
 SERVER_IP="$1"
 
